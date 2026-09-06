@@ -71,14 +71,38 @@ class Tree {
             }
         }
     }
+    getPredecessor(rootNode) {
+        let temp = rootNode.leftChild;
+        while (temp != null && temp.rightChild != null) {
+            temp = temp.rightChild;
+        }
+        return temp;
+    }
     deleteItem(value, rootNode = this.root) {
-        if (!this.root) return rootNode;
-        if (!this.includes(value)) console.log("not in tree");
+        if (!rootNode) return rootNode;
+        if (!this.includes(value)) return;
 
+        if (rootNode.data > value) {
+            rootNode.leftChild = this.deleteItem(value, rootNode.leftChild);
+        } else if (rootNode.data < value) {
+            rootNode.rightChild = this.deleteItem(value, rootNode.rightChild);
+        } else {
+            if (rootNode.leftChild === null) {
+                return rootNode.rightChild;
+            }
+            if (rootNode.rightChild === null) {
+                return rootNode.leftChild;
+            }
+            let predecessor = this.getPredecessor(rootNode);
+            rootNode.data = predecessor.data;
+            rootNode.leftChild = this.deleteItem(predecessor.data, rootNode.leftChild);
+        }
+
+        return rootNode;
     }
 }
 
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-t.deleteItem(9);
+//t.deleteItem();
 
 t.prettyPrint(t.root);
