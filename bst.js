@@ -100,9 +100,32 @@ class Tree {
 
         return rootNode;
     }
+    levelOrderForEach(callback) {
+        if (!callback) throw new Error("callback is required");
+        if (this.root === null) return;
+        let visitedNode = [];
+        let discorveredNode = [];
+        let visitedNodeData = [];
+        discorveredNode.push(this.root);
+        while (discorveredNode.length != 0) {
+            let front = discorveredNode[0];
+            visitedNodeData.push(front.data);
+            console.log(visitedNodeData);
+            discorveredNode.shift();
+            if (front.leftChild != null) discorveredNode.push(front.leftChild);
+            if (front.rightChild != null) discorveredNode.push(front.rightChild);
+        }
+        for (let i = 0; i < visitedNodeData.length; i++) {
+            callback(visitedNodeData[i]);
+        }
+    }
 }
 
+//function callbackLevelOrderForEach(value) {
+//    console.log(value + 1);
+//}
+
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-//t.deleteItem();
+//t.levelOrderForEach(callbackLevelOrderForEach);
 
 t.prettyPrint(t.root);
