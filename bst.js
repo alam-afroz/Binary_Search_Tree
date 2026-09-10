@@ -110,22 +110,92 @@ class Tree {
         while (discorveredNode.length != 0) {
             let front = discorveredNode[0];
             visitedNodeData.push(front.data);
-            console.log(visitedNodeData);
+            //console.log(visitedNodeData);
             discorveredNode.shift();
             if (front.leftChild != null) discorveredNode.push(front.leftChild);
             if (front.rightChild != null) discorveredNode.push(front.rightChild);
         }
+        let update = [];
         for (let i = 0; i < visitedNodeData.length; i++) {
-            callback(visitedNodeData[i]);
+            update.push(callback(visitedNodeData[i]));
         }
+        return update;
+    }
+    preOrderForEach(callback, nodeList = [], rootNode = this.root) {
+        if (!callback) throw new Error("callback is required");
+        if (rootNode === null) return rootNode;
+        nodeList.push(rootNode);
+        nodeList.push(this.preOrderForEach(callback, nodeList, rootNode.leftChild));
+        nodeList.push(this.preOrderForEach(callback, nodeList, rootNode.rightChild));
+        let nodeListNoNull = nodeList.filter((node) => node != null);
+        let nodeListData = [];
+        nodeListNoNull.forEach((node) => {
+            nodeListData.push(node.data);
+        });
+        let nodeListNoUndefined = nodeListData.filter((node) => node != undefined);
+        let callbackNodeList = [];
+        nodeListNoUndefined.forEach((item) => {
+            callbackNodeList.push(callback(item));
+        });
+
+        return callbackNodeList;
+    }
+    postOrderForEach(callback, nodeList = [], rootNode = this.root) {
+        if (!callback) throw new Error("callback is required");
+
+        if (rootNode === null) return rootNode;
+        nodeList.push(this.preOrderForEach(callback, nodeList, rootNode.leftChild));
+        nodeList.push(this.preOrderForEach(callback, nodeList, rootNode.rightChild));
+        nodeList.push(rootNode);
+        let nodeListNoNull = nodeList.filter((node) => node != null);
+        let nodeListData = [];
+        nodeListNoNull.forEach((node) => {
+            nodeListData.push(node.data);
+        });
+        let nodeListNoUndefined = nodeListData.filter((node) => node != undefined);
+        let callbackNodeList = [];
+        nodeListNoUndefined.forEach((item) => {
+            callbackNodeList.push(callback(item));
+        });
+
+        return callbackNodeList;
+    }
+    inOrderForEach(callback, nodeList = [], rootNode = this.root) {
+        if (!callback) throw new Error("callback is required");
+        nodeList = this.#inOrder();
+        let nodedata = [];
+        let updatedNodeData = [];
+        nodeList.forEach((node) => {
+            if (node != undefined) nodedata.push(node);
+        });
+        for (let i = 0; i < nodedata.length; i++) {
+            let j = callback(nodedata[i]);
+            updatedNodeData.push(j);
+        }
+        return updatedNodeData;
+    }
+    #inOrder(nodeList = [], rootNode = this.root) {
+        if (rootNode === null) return rootNode;
+        nodeList.push(this.#inOrder(nodeList, rootNode.leftChild));
+        nodeList.push(rootNode);
+        nodeList.push(this.#inOrder(nodeList, rootNode.rightChild));
+        let nodeListData = [];
+        for (let i = 0; i < nodeList.length; i++) {
+            if (nodeList[i] != null) {
+                nodeListData.push(nodeList[i].data);
+            }
+        }
+        return nodeListData;
     }
 }
 
-//function callbackLevelOrderForEach(value) {
-//    console.log(value + 1);
-//}
+function callback(value) {
+    return value;
+}
 
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //t.levelOrderForEach(callbackLevelOrderForEach);
-
+let a = t.levelOrderForEach(callback);
+console.log("a: ", a);
 t.prettyPrint(t.root);
+//[1, 2, 3, 4, 5, 6, 7, 8, 9]
