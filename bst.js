@@ -7,21 +7,21 @@ class Node {
 }
 class Tree {
     constructor(array) {
-        this.root = this.buildTree(array);
+        this.root = this.#buildTree(array);
     }
-    buildTree(array, start = 0, end = array.length - 1) {
+    #buildTree(array, start = 0, end = array.length - 1) {
         //array = [...new Set(array)];
         array.sort((a, b) => a - b);
-        array = this.removeDuplicate(array);
+        array = this.#removeDuplicate(array);
         if (start > end) return null;
         let mid = Math.floor((start + end) / 2);
         let rootNode = new Node(array[mid]);
-        rootNode.leftChild = this.buildTree(array, start, mid - 1);
-        rootNode.rightChild = this.buildTree(array, mid + 1, end);
+        rootNode.leftChild = this.#buildTree(array, start, mid - 1);
+        rootNode.rightChild = this.#buildTree(array, mid + 1, end);
 
         return rootNode;
     }
-    removeDuplicate(array) {
+    #removeDuplicate(array) {
         let temp = array;
         array = [];
         for (let number of temp) {
@@ -72,7 +72,7 @@ class Tree {
             }
         }
     }
-    getPredecessor(rootNode) {
+    #getPredecessor(rootNode) {
         let temp = rootNode.leftChild;
         while (temp != null && temp.rightChild != null) {
             temp = temp.rightChild;
@@ -94,7 +94,7 @@ class Tree {
             if (rootNode.rightChild === null) {
                 return rootNode.leftChild;
             }
-            let predecessor = this.getPredecessor(rootNode);
+            let predecessor = this.#getPredecessor(rootNode);
             rootNode.data = predecessor.data;
             rootNode.leftChild = this.deleteItem(predecessor.data, rootNode.leftChild);
         }
@@ -264,24 +264,20 @@ class Tree {
                 if (curr.leftChild != null && curr.rightChild != null) {
                     diff = this.height(curr.leftChild.data) - this.height(curr.rightChild.data);
                 }
-                console.log(diff);
+
                 if (diff > 1 || diff < -1) return false;
             }
         }
         return true;
     }
+    rebalance() {
+        let n = this.inOrderForEach(this.#cb);
+        this.root = this.#buildTree(n);
+        return n;
+    }
+    #cb(value) {
+        return value;
+    }
 }
 
-function callback(value) {
-    return value;
-}
-
-let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
-//t.levelOrderForEach(callbackLevelOrderForEach);
-t.insert(12);
-
-t.prettyPrint(t.root);
-let a = t.isBalanced();
-console.log("depth: ", a);
-//[1, 2, 3, 4, 5, 6, 7, 8, 9]
+export { Tree };
