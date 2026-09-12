@@ -40,5 +40,7 @@ The project consists of two classes :
 2. Create an instance to the class and pass an array to it. `const test = new Tree(array)`
 
 3. Run `test.prettyPrint(test.root)` to get a visual of the tree in the console
-   ![Example]("./asset/prettyPrintExample.png")
+   ![Example](./asset/prettyPrintExample.png)
 4. Use above mentioned method to modify the Tree
+
+-   Use [demo.js](./demo.js) to test the Project, it already has tree initialized and tested.
