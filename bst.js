@@ -50,6 +50,7 @@ class Tree {
         if (this.includes(value, rootNode.rightChild)) return true;
         return false;
     }
+
     insert(value) {
         if (!this.root) return (this.root = new Node(value));
         if (this.includes(value)) return "already inserted";
@@ -160,6 +161,7 @@ class Tree {
 
         return callbackNodeList;
     }
+
     inOrderForEach(callback, nodeList = [], rootNode = this.root) {
         if (!callback) throw new Error("callback is required");
 
@@ -181,19 +183,41 @@ class Tree {
 
         return callbackNodeList;
     }
-    //#inOrder(nodeList = [], rootNode = this.root) {
-    //if (rootNode === null) return rootNode;
-    //nodeList.push(this.#inOrder(nodeList, rootNode.leftChild));
-    //nodeList.push(rootNode);
-    //nodeList.push(this.#inOrder(nodeList, rootNode.rightChild));
-    //let nodeListData = [];
-    //for (let i = 0; i < nodeList.length; i++) {
-    //    if (nodeList[i] != null) {
-    //        nodeListData.push(nodeList[i].data);
-    //    }
-    //}
-    //return nodeListData;
-    //}
+    #findNodeFromValue(value, nodeList = [], rootNode = this.root) {
+        if (rootNode === null) return rootNode;
+        nodeList.push(this.#findNodeFromValue(value, nodeList, rootNode.leftChild));
+        nodeList.push(rootNode);
+        nodeList.push(this.#findNodeFromValue(value, nodeList, rootNode.rightChild));
+
+        let nodeListNoNull = nodeList.filter((node) => node != null);
+        let valueNode;
+        nodeListNoNull.forEach((node) => {
+            if (node.data === value) {
+                valueNode = node;
+            }
+        });
+        return valueNode;
+    }
+    height(value) {
+        if (!this.includes(value)) return undefined;
+        let temp = this.#findNodeFromValue(value);
+
+        let discorveredNode = [];
+
+        let count = 0;
+        discorveredNode.push(temp);
+        while (discorveredNode.length != 0) {
+            for (let i = 0; i < discorveredNode.length; i++) {
+                let front = discorveredNode.shift();
+                if (front.leftChild != null) discorveredNode.push(front.leftChild);
+                if (front.rightChild != null) discorveredNode.push(front.rightChild);
+            }
+
+            count += 1;
+        }
+
+        return count - 1;
+    }
 }
 
 function callback(value) {
@@ -203,6 +227,6 @@ function callback(value) {
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //t.levelOrderForEach(callbackLevelOrderForEach);
 t.prettyPrint(t.root);
-let a = t.inOrderForEach(callback);
-console.log("a: ", a);
+let a = t.height(6);
+console.log("height: ", a);
 //[1, 2, 3, 4, 5, 6, 7, 8, 9]
