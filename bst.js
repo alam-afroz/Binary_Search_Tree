@@ -218,6 +218,22 @@ class Tree {
 
         return count - 1;
     }
+    depth(value) {
+        if (!this.includes(value)) return undefined;
+        let count = 0;
+let curr = this.root;
+        while (curr != null) {
+            if (curr.data === value) return count;
+            if (curr.data > value) {
+                curr = curr.leftChild;
+                count += 1;
+            }
+            if (curr.data < value) {
+                curr = curr.rightChild;
+                count += 1;
+            }
+        }
+    }
 }
 
 function callback(value) {
@@ -227,6 +243,6 @@ function callback(value) {
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 //t.levelOrderForEach(callbackLevelOrderForEach);
 t.prettyPrint(t.root);
-let a = t.height(6);
-console.log("height: ", a);
+let a = t.depth(7);
+console.log("depth: ", a);
 //[1, 2, 3, 4, 5, 6, 7, 8, 9]
