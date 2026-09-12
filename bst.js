@@ -221,7 +221,7 @@ class Tree {
     depth(value) {
         if (!this.includes(value)) return undefined;
         let count = 0;
-let curr = this.root;
+        let curr = this.root;
         while (curr != null) {
             if (curr.data === value) return count;
             if (curr.data > value) {
@@ -234,6 +234,42 @@ let curr = this.root;
             }
         }
     }
+    isBalanced() {
+        let temp = this.root;
+        let discNode = [];
+        let visitNode = [];
+
+        discNode.push(this.root);
+        while (discNode.length != 0) {
+            let front = discNode[0];
+            visitNode.push(front);
+            //console.log(visitedNodeData);
+            discNode.shift();
+            if (front.leftChild != null) discNode.push(front.leftChild);
+            if (front.rightChild != null) discNode.push(front.rightChild);
+        }
+        let diff = 0;
+        for (let i = 0; i < visitNode.length; i++) {
+            let curr = visitNode[i];
+
+            if (this.height(curr.data) != 0) {
+                //console.log("h", this.height(curr.data));
+                //console.log("d", curr.data);
+                if (curr.leftChild === null) {
+                    diff = 0 - this.height(curr.rightChild.data);
+                }
+                if (curr.rightChild === null) {
+                    diff = this.height(curr.leftChild.data) - 0;
+                }
+                if (curr.leftChild != null && curr.rightChild != null) {
+                    diff = this.height(curr.leftChild.data) - this.height(curr.rightChild.data);
+                }
+                console.log(diff);
+                if (diff > 1 || diff < -1) return false;
+            }
+        }
+        return true;
+    }
 }
 
 function callback(value) {
@@ -241,8 +277,11 @@ function callback(value) {
 }
 
 let t = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
 //t.levelOrderForEach(callbackLevelOrderForEach);
+t.insert(12);
+
 t.prettyPrint(t.root);
-let a = t.depth(7);
+let a = t.isBalanced();
 console.log("depth: ", a);
 //[1, 2, 3, 4, 5, 6, 7, 8, 9]
